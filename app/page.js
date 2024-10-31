@@ -1,11 +1,30 @@
 'use client';
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
 import { useRef, useEffect, useState } from 'react';
 import p5 from 'p5';
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDOFMKmigCxtPg9EpLXVfi4ys7MyvxW49w",
+  authDomain: "testing-83908.firebaseapp.com",
+  projectId: "testing-83908",
+  storageBucket: "testing-83908.firebasestorage.app",
+  messagingSenderId: "293376159716",
+  appId: "1:293376159716:web:442a73613a64eb9a4661f1",
+  measurementId: "G-H11F1LKQ1C"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
 export default function Home() {
   const sketchRef = useRef();
-  const p5InstanceRef = useRef(); // Ref to store p5.js instance
+  const p5InstanceRef = useRef();
   const [voteCount, setVoteCount] = useState(0);
 
   useEffect(() => {
@@ -16,12 +35,14 @@ export default function Home() {
       let accelerationX = 0;
 
       p.setup = () => {
-        p.createCanvas(400, 400);
+        p.createCanvas(1920, 1080);
         p.background(200);
       };
 
       p.draw = () => {
         p.background(200);
+        p.text(`Votes: ${voteCount}`, 10, 20);
+        p.text(`Velocity: ${velocityX}`, 70, 20);
 
         // Update velocity based on acceleration
         velocityX += accelerationX;
@@ -50,7 +71,7 @@ export default function Home() {
     return () => {
       p5InstanceRef.current.remove();
     };
-  }, []); // Run only once
+  }, []);
 
   // Fetch voteCount from the API
   useEffect(() => {
@@ -81,8 +102,7 @@ export default function Home() {
   }, [voteCount]);
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <h1>Hello</h1>
+    <div className="">
       <div ref={sketchRef}></div>
     </div>
   );
