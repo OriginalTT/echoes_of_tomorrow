@@ -1,26 +1,10 @@
 'use client';
 
 import Image from "next/image";
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
-
-import { useRef, useEffect, useState } from 'react';
+import { db } from '../lib/firebase';
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { useEffect, useState } from 'react';
 // import p5 from 'p5';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDOFMKmigCxtPg9EpLXVfi4ys7MyvxW49w",
-  authDomain: "testing-83908.firebaseapp.com",
-  projectId: "testing-83908",
-  storageBucket: "testing-83908.firebasestorage.app",
-  messagingSenderId: "293376159716",
-  appId: "1:293376159716:web:442a73613a64eb9a4661f1",
-  measurementId: "G-H11F1LKQ1C"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// Initialize Cloud Firestore and get a reference to the service
-const db = getFirestore(app);
 
 export default function Home() {
   // const sketchRef = useRef();
@@ -28,15 +12,21 @@ export default function Home() {
   const [votes, setVotes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const q = query(collection(db, "votes"), where("target", "==", "polution"));
-  const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    const result = [];
-    querySnapshot.forEach((doc) => {
-      result.push(doc.data());
+  useEffect(() => {
+    const q = query(collection(db, "votes"), where("target", "==", "polution"));
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const result = [];
+      querySnapshot.forEach((doc) => {
+        result.push(doc.data());
+      })
+      setVotes(result);
+      setLoading(false)
     })
-    setVotes(result);
-    setLoading(false)
-  })
+    return () => {
+      unsubscribe();
+    }
+  }, [])
 
   // useEffect(() => {
   //   // Define the p5 sketch
