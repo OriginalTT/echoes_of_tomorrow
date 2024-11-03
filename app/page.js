@@ -1,14 +1,11 @@
 'use client';
-// Import the functions you need from the SDKs you need
+
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
 
 import { useRef, useEffect, useState } from 'react';
 import p5 from 'p5';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDOFMKmigCxtPg9EpLXVfi4ys7MyvxW49w",
   authDomain: "testing-83908.firebaseapp.com",
@@ -21,89 +18,91 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+// Initialize Cloud Firestore and get a reference to the service
+const db = getFirestore(app);
 
 export default function Home() {
-  const sketchRef = useRef();
-  const p5InstanceRef = useRef();
-  const [voteCount, setVoteCount] = useState(0);
+  // const sketchRef = useRef();
+  // const p5InstanceRef = useRef();
+  const [votes, setVotes] = useState([]);
 
-  useEffect(() => {
-    // Define the p5 sketch
-    const sketch = (p) => {
-      let targetX = 0;
-      let velocityX = 0;
-      let accelerationX = 0;
+  const q = query(collection(db, "votes"), where("target", "==", "polution"));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const result = [];
+    querySnapshot.forEach((doc) => {
+      result.push(doc.data());
+    })
+    setVotes(result)
+  })
 
-      p.setup = () => {
-        p.createCanvas(1920, 1080);
-        p.background(200);
-      };
+  // useEffect(() => {
+  //   // Define the p5 sketch
+  //   const sketch = (p) => {
+  //     let targetX = 0;
+  //     let velocityX = 0;
+  //     let accelerationX = 0;
 
-      p.draw = () => {
-        p.background(200);
-        p.text(`Votes: ${voteCount}`, 10, 20);
-        p.text(`Velocity: ${velocityX}`, 70, 20);
+  //     p.setup = () => {
+  //       p.createCanvas(1920, 1080);
+  //       p.background(200);
+  //     };
 
-        // Update velocity based on acceleration
-        velocityX += accelerationX;
-        targetX += velocityX;
+  //     p.draw = () => {
+  //       p.background(200);
+  //       p.text(`Votes: ${voteCount}`, 10, 20);
+  //       p.text(`Velocity: ${velocityX}`, 70, 20);
 
-        // Keep targetX within canvas boundaries
-        if (targetX > p.width) {
-          targetX = 0;
-        };
+  //       // Update velocity based on acceleration
+  //       velocityX += accelerationX;
+  //       targetX += velocityX;
 
-        // Draw the ellipse at the updated position
-        p.fill(255, 0, 0);
-        p.ellipse(targetX, p.height / 2, 35, 35);
-      };
+  //       // Keep targetX within canvas boundaries
+  //       if (targetX > p.width) {
+  //         targetX = 0;
+  //       };
 
-      // Method to update acceleration
-      p.setAcceleration = (newAcceleration) => {
-        accelerationX = newAcceleration;
-      };
-    };
+  //       // Draw the ellipse at the updated position
+  //       p.fill(255, 0, 0);
+  //       p.ellipse(targetX, p.height / 2, 35, 35);
+  //     };
 
-    // Initialize p5 instance and attach it to the ref
-    p5InstanceRef.current = new p5(sketch, sketchRef.current);
+  //     // Method to update acceleration
+  //     p.setAcceleration = (newAcceleration) => {
+  //       accelerationX = newAcceleration;
+  //     };
+  //   };
 
-    // Cleanup the p5 instance on component unmount
-    return () => {
-      p5InstanceRef.current.remove();
-    };
-  }, []);
+  //   // Initialize p5 instance and attach it to the ref
+  //   p5InstanceRef.current = new p5(sketch, sketchRef.current);
 
-  // Fetch voteCount from the API
-  useEffect(() => {
-    const fetchVotes = async () => {
-      try {
-        const response = await fetch('/api'); // Adjust API endpoint as needed
-        const data = await response.json();
-        setVoteCount(data.votes); // Update voteCount with fetched data
-      } catch (error) {
-        console.error('Error fetching votes:', error);
-      }
-    };
+  //   // Cleanup the p5 instance on component unmount
+  //   return () => {
+  //     p5InstanceRef.current.remove();
+  //   };
+  // }, []);
 
-    // Polling interval to fetch voteCount periodically
-    const interval = setInterval(() => {
-      fetchVotes();
-    }, 2000); // Fetch every 2 seconds
-
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, []);
-
-  // Update acceleration when voteCount changes
-  useEffect(() => {
-    if (p5InstanceRef.current) {
-      const newAcceleration = p5InstanceRef.current.map(voteCount, 0, 100, 0, 0.2);
-      p5InstanceRef.current.setAcceleration(newAcceleration);
-    }
-  }, [voteCount]);
 
   return (
-    <div className="">
-      <div ref={sketchRef}></div>
-    </div>
+    <main>
+      <div className="">
+        <div className="flex flex-col">
+          {
+            votes.map((vote, index) => (
+              <div className="flex gap-3" key={index}>
+                <p>{vote.target || "N/A"}</p>
+                <p>{vote.userId || "N/A"}</p>
+                <p>
+                  {vote.timestamp
+                    ? new Date(vote.timestamp.seconds * 1000).toLocaleString()
+                    : "N/A"}
+                </p>
+                <p>{vote.score || "N/A"}</p>
+              </div>
+            ))
+          }
+        </div>
+        {/* <div ref={sketchRef}></div> */}
+      </div>
+    </main>
   );
 }
