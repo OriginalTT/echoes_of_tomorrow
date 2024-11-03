@@ -4,7 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
 
 import { useRef, useEffect, useState } from 'react';
-import p5 from 'p5';
+// import p5 from 'p5';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDOFMKmigCxtPg9EpLXVfi4ys7MyvxW49w",
