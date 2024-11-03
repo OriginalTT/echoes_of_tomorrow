@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
 
@@ -25,6 +26,7 @@ export default function Home() {
   // const sketchRef = useRef();
   // const p5InstanceRef = useRef();
   const [votes, setVotes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const q = query(collection(db, "votes"), where("target", "==", "polution"));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -32,7 +34,8 @@ export default function Home() {
     querySnapshot.forEach((doc) => {
       result.push(doc.data());
     })
-    setVotes(result)
+    setVotes(result);
+    setLoading(false)
   })
 
   // useEffect(() => {
@@ -84,25 +87,33 @@ export default function Home() {
 
   return (
     <main>
-      <div className="">
-        <div className="flex flex-col">
-          {
-            votes.map((vote, index) => (
-              <div className="flex gap-3" key={index}>
-                <p>{vote.target || "N/A"}</p>
-                <p>{vote.userId || "N/A"}</p>
-                <p>
-                  {vote.timestamp
-                    ? new Date(vote.timestamp.seconds * 1000).toLocaleString()
-                    : "N/A"}
-                </p>
-                <p>{vote.score || "N/A"}</p>
-              </div>
-            ))
-          }
+      {loading ? (
+        <div className="w-full h-screen flex flex-col justify-center items-center">
+          <Image src="/plant.gif" alt="Loading Data..." width={100} height={100} />
+          <p>Loading Data...</p>
         </div>
-        {/* <div ref={sketchRef}></div> */}
-      </div>
+      ) :
+        (<div>
+          <div className="flex flex-col">
+            {
+              votes.map((vote, index) => (
+                <div className="flex gap-3" key={index}>
+                  <p>{vote.target || "N/A"}</p>
+                  <p>{vote.userId || "N/A"}</p>
+                  <p>
+                    {vote.timestamp
+                      ? new Date(vote.timestamp.seconds * 1000).toLocaleString()
+                      : "N/A"}
+                  </p>
+                  <p>{vote.score || "N/A"}</p>
+                </div>
+              ))
+            }
+          </div>
+          {/* <div ref={sketchRef}></div> */}
+        </div>
+        )
+      }
     </main>
   );
 }

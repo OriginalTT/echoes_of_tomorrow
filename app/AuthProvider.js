@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { useState, useEffect, createContext, useContext } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
@@ -63,8 +64,12 @@ export default function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children} {/* Render children only when not loading */}
-            {loading && <div>Loading...</div>} {/* Optional: Loading indicator */}
+            {!loading && children}
+            {loading && (
+                <main className="w-full h-screen flex flex-col justify-center items-center">
+                    <Image src="/plant.gif" alt="Loading..." width={100} height={100} />
+                    <p>Authenticating...</p>
+                </main>)}
         </AuthContext.Provider>
     );
 }
