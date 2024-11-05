@@ -89,6 +89,7 @@ export default function Home() {
         </div>
       ) :
         (<div>
+          <Image src="/qr_code.png" alt="QR Code" width={100} height={100} />
           <table>
             <thead>
               <tr>
@@ -120,7 +121,6 @@ export default function Home() {
             </tbody>
           </table>
           {/* <div className="flex flex-col">
-            
           </div> */}
           {/* <div ref={sketchRef}></div> */}
         </div>
