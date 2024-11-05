@@ -13,13 +13,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(collection(db, "votes"), where("target", "==", "polution"));
+    const q = query(collection(db, "votes"));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const result = [];
       querySnapshot.forEach((doc) => {
         result.push(doc.data());
       })
+      result.sort((a, b) => b.timestamp - a.timestamp);
       setVotes(result);
       setLoading(false)
     })
@@ -27,6 +28,10 @@ export default function Home() {
       unsubscribe();
     }
   }, [])
+
+  useEffect(() => {
+    console.log(votes);
+  }, [votes])
 
   // useEffect(() => {
   //   // Define the p5 sketch
@@ -84,22 +89,39 @@ export default function Home() {
         </div>
       ) :
         (<div>
-          <div className="flex flex-col">
-            {
-              votes.map((vote, index) => (
-                <div className="flex gap-3" key={index}>
-                  <p>{vote.target || "N/A"}</p>
-                  <p>{vote.userId || "N/A"}</p>
-                  <p>
-                    {vote.timestamp
-                      ? new Date(vote.timestamp.seconds * 1000).toLocaleString()
-                      : "N/A"}
-                  </p>
-                  <p>{vote.score || "N/A"}</p>
-                </div>
-              ))
-            }
-          </div>
+          <table>
+            <thead>
+              <tr>
+                <th className="px-3">Timestamp</th>
+                <th className="px-3">User ID</th>
+                <th className="px-3">Target</th>
+                <th className="px-3">Question</th>
+                <th className="px-3">Choice</th>
+                <th className="px-3">Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                votes.map((vote, index) => (
+                  <tr key={index}>
+                    <td className="px-3">
+                      {vote.timestamp
+                        ? new Date(vote.timestamp.seconds * 1000).toLocaleString()
+                        : "N/A"}
+                    </td>
+                    <td className="px-3">{vote.userId != null ? vote.userId : "N/A"}</td>
+                    <td className="px-3">{vote.target != null ? vote.target : "N/A"}</td>
+                    <td className="px-3">{vote.questionId != null ? vote.questionId : "N/A"}</td>
+                    <td className="px-3">{vote.choiceId != null ? vote.choiceId : "N/A"}</td>
+                    <td className="px-3">{vote.score != null ? vote.score : "N/A"}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+          {/* <div className="flex flex-col">
+            
+          </div> */}
           {/* <div ref={sketchRef}></div> */}
         </div>
         )
