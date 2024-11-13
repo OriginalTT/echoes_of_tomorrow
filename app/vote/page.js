@@ -11,6 +11,7 @@ export default function Vote() {
     const [questionInfo, setQuestionInfo] = useState(null);
     const [responseMessage, setResponseMessage] = useState('');
     const [answered, setAnswered] = useState(false);
+    const [selected, setSelected] = useState(false);
     const [error, setError] = useState('');
     const [selectedAnswer, setSelectedAnswer] = useState(null);
 
@@ -57,6 +58,9 @@ export default function Vote() {
 
     const handleSelection = async (event) => {
         const selectedAnswer = event.target.value;
+        if (!selected) {
+            setSelected(true);
+        }
         setSelectedAnswer(selectedAnswer);
 
         try {
@@ -80,11 +84,13 @@ export default function Vote() {
                 setError('');
             } else {
                 setAnswered(false);
+                setSelected(false);
                 setError(data.message || 'Something went wrong.');
                 setResponseMessage('');
             }
         } catch (err) {
             setAnswered(false);
+            setSelected(false);
             console.error('Error submitting the form:', err);
             setError('There was a problem submitting your answer. Please try again.');
             setResponseMessage('');
@@ -123,6 +129,7 @@ export default function Vote() {
                                             name="selected_option"
                                             value={index}
                                             onChange={handleSelection}
+                                            disabled={selected}
                                             className='appearance-none' />
                                         <label htmlFor={"option_" + index}
                                             className='text-lg flex gap-1'
