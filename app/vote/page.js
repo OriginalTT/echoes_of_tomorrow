@@ -26,7 +26,9 @@ export default function Vote() {
                 querySnapshot.forEach((doc) => {
                     questions.push(doc.data());
                 });
-                setQuestionInfo(questions[Math.floor(Math.random() * questions.length)]);
+                const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
+                shuffleArray(selectedQuestion.choices)
+                setQuestionInfo(selectedQuestion);
             } catch (e) {
                 console.log("Transaction failed: ", e);
             }
@@ -89,6 +91,13 @@ export default function Vote() {
         setWelcome(false);
     }
 
+    const shuffleArray = (array) => {
+        for (let i = array.length - 1; i >= 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
     return (
         <>
             <Image src={"/bg_noise.png"} alt="background image" width={390} height={753} quality={100}
@@ -137,8 +146,8 @@ export default function Vote() {
                                                 onChange={handleSelection}
                                                 disabled={selectedAnswer !== null}
                                                 className='appearance-none 
-                                            disabled:opacity-50 
-                                            enabled:hover:bg-[#54522A] enabled:hover:text-white' />
+                                                disabled:opacity-50 
+                                                enabled:hover:bg-[#54522A] enabled:hover:text-white' />
                                             <label htmlFor={"option_" + index}>
                                                 <p className='text-[#5C5A32] font-semibold font-ce'>{option.label}</p>
                                             </label>
