@@ -24,6 +24,7 @@ export default function AuthProvider({ children }) {
         signInAnonymously(auth)
             .then(() => {
                 console.log("Signed in anonymously");
+                console.log("User ID:", auth.currentUser.uid);
             })
             .catch((error) => {
                 console.error("Error signing in anonymously:", error.code, error.message);
@@ -48,14 +49,26 @@ export default function AuthProvider({ children }) {
         loading,
     };
 
+    useEffect(() => {
+        console.log(loading);
+    }, [loading]);
+
     return (
         <AuthContext.Provider value={value}>
             {!loading && children}
-            {loading && (
-                <main className="w-full h-screen flex flex-col justify-center items-center">
-                    <Image src="/plant.gif" alt="Loading..." width={100} height={100} />
-                    <p>Authenticating...</p>
-                </main>)}
+            {loading ? (
+                <main className="flex flex-col justify-center items-center">
+                    <Image src={"/bg_noise.png"} alt="background image" width={390} height={753} quality={100}
+                        className="w-screen h-screen object-cover fixed top-0 left-0 z-[-1]" />
+                    <div className='bg-gradient-to-b from-[#69860C] to-[#b5cc6b] 
+            w-screen h-screen fixed top-0 left-0 z-[-2]'></div>
+                    <div className='flex flex-col items-center mt-48'>
+                        <Image src={'/loader.png'} alt="check mark" width={250} height={250} />
+                        <p
+                            className='text-2xl font-bold text-white text-center mt-10'
+                        >Authenticating...</p>
+                    </div>
+                </main>) : null}
         </AuthContext.Provider>
     );
 }

@@ -7,12 +7,12 @@ import { useAuth } from "../AuthProvider";
 import { useState, useEffect } from 'react';
 import Image from "next/image";
 
+import Welcome from "./components/Welcome";
+
 export default function Vote() {
     const [questionInfo, setQuestionInfo] = useState(null);
-    const [responseMessage, setResponseMessage] = useState('');
+    const [welcome, setWelcome] = useState(true);
     const [answered, setAnswered] = useState(false);
-    const [selected, setSelected] = useState(false);
-    const [error, setError] = useState('');
     const [selectedAnswer, setSelectedAnswer] = useState(null);
 
     const { user } = useAuth();
@@ -57,11 +57,7 @@ export default function Vote() {
     }, [user]);
 
     const handleSelection = async (event) => {
-        const selectedAnswer = event.target.value;
-        if (!selected) {
-            setSelected(true);
-        }
-        setSelectedAnswer(selectedAnswer);
+        setSelectedAnswer(event.target.value);
 
         try {
             const res = await fetch('/api/vote', {
@@ -80,83 +76,89 @@ export default function Vote() {
 
             if (res.ok) {
                 setAnswered(true);
-                setResponseMessage(data.message);
-                setError('');
             } else {
                 setAnswered(false);
-                setSelected(false);
-                setError(data.message || 'Something went wrong.');
-                setResponseMessage('');
             }
         } catch (err) {
             setAnswered(false);
-            setSelected(false);
             console.error('Error submitting the form:', err);
-            setError('There was a problem submitting your answer. Please try again.');
-            setResponseMessage('');
         }
     };
 
+    const handleExitWelcome = () => {
+        setWelcome(false);
+    }
+
     return (
-        <main className="flex flex-col items-center justify-center w-4/5 mx-auto mt-10">
-            {!answered ?
-                <div className='flex flex-col items-center gap-8'>
-                    <header className='w-full h-auto'>
-                        {questionInfo &&
-                            <Image
-                                src={"/questions/" + questionInfo.id + ".png"}
-                                alt="banner"
-                                width={945} height={615}
-                                className="w-full object-cover object-bottom rounded"
-                            />
-                        }
-                    </header>
-                    <form>
-                        <fieldset className="flex flex-col items-center gap-5">
-                            <div>
-                                <legend className="text-lg">
-                                    {questionInfo && questionInfo.question}
-                                </legend>
-                            </div>
-                            <div className='flex flex-col items-center gap-3'>
-                                {questionInfo && questionInfo.choices.map((option, index) => (
-                                    <div key={index}
-                                        className="flex items-left gap-1 bg-gray-300 p-3 rounded w-full"
-                                    >
-                                        <input
-                                            type="radio"
-                                            id={"option_" + index}
-                                            name="selected_option"
-                                            value={index}
-                                            onChange={handleSelection}
-                                            disabled={selected}
-                                            className='appearance-none' />
-                                        <label htmlFor={"option_" + index}
-                                            className='text-lg flex gap-1'
+        <>
+            <Image src={"/bg_noise.png"} alt="background image" width={390} height={753} quality={100}
+                className="w-screen h-screen object-cover fixed top-0 left-0 z-[-1]" />
+            <div className='bg-gradient-to-b from-[#69860C] to-[#b5cc6b] 
+            w-screen h-screen fixed top-0 left-0 z-[-2]'></div>
+
+            {/* WELCOME */}
+            {welcome ? <Welcome exitWelcome={handleExitWelcome} /> : null}
+
+
+            {/* HEADER */}
+            {!welcome ? (
+                <main className="flex flex-col items-center justify-center w-5/6 mx-auto mt-5">
+                    <Image src={'/logo_horizontal.png'} alt="Logo" width={180} height={50} quality={100} />
+
+
+                    {/* VOTED */}
+                    {(answered && !selectedAnswer) ?
+                        <div className='flex flex-col items-center mt-40'>
+                            <Image src={'/check.png'} alt="check mark" width={250} height={250} />
+                            <p
+                                className='text-2xl font-bold text-white text-center mt-10'
+                            >You Have Already Voted</p>
+                        </div>
+                        : null}
+
+
+                    {/* VOTING FORM */}
+                    {(!answered && !selectedAnswer) ?
+                        <form className='my-8'>
+                            <fieldset>
+                                <p className='text-white text-7xl font-bold'>Q.</p>
+                                <p className='text-white text-lg font-bold'>{questionInfo && questionInfo.question}</p>
+                                <div className='w-full mx-auto h-[2px] bg-white mt-5 mb-8' />
+                                <div className='flex flex-col items-center gap-5'>
+                                    {questionInfo && questionInfo.choices.map((option, index) => (
+                                        <div key={index}
+                                            className="bg-[#FBFFEE] px-10 rounded-2xl w-full h-32 flex items-center  cursor-pointer"
                                         >
-                                            <p>{index + 1}.</p>
-                                            <p>{option.label}</p>
-                                        </label>
-                                    </div>
-                                ))}
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-                : (selectedAnswer ?
-                    <div>
-                        <p
-                            className='text-3xl text-center mt-10'
-                        >{questionInfo.choices[selectedAnswer].result}</p>
-                    </div>
-                    :
-                    <div>
-                        <p
-                            className='text-3xl text-center mt-10'
-                        >You have already voted.</p>
-                    </div>
-                )
-            }
-        </main>
+                                            <input
+                                                type="radio"
+                                                id={"option_" + index}
+                                                name="selected_option"
+                                                value={index}
+                                                onChange={handleSelection}
+                                                disabled={selectedAnswer !== null}
+                                                className='appearance-none 
+                                            disabled:opacity-50 
+                                            enabled:hover:bg-[#54522A] enabled:hover:text-white' />
+                                            <label htmlFor={"option_" + index}>
+                                                <p className='text-[#5C5A32] font-semibold font-ce'>{option.label}</p>
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </fieldset>
+                        </form> : null}
+
+
+                    {/* RESULT */}
+                    {selectedAnswer ?
+                        <div className='flex flex-col items-center mt-40'>
+                            <Image src={'/thumbs_up.png'} alt="check mark" width={250} height={250} />
+                            <p
+                                className='text-2xl font-bold text-white text-center mt-10'
+                            >{questionInfo.choices[selectedAnswer].result}</p>
+                        </div> : null}
+                </main>
+            ) : null}
+        </>
     );
 }
