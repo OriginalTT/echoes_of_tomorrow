@@ -7,7 +7,6 @@ export async function POST(req) {
         // Manually parse the JSON body
 
         const data = await req.json();
-        console.log(data);
         const { userId, choiceId } = data;
 
         const addVote = await addDoc(collection(db, "votes"), {

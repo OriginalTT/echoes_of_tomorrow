@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import Image from "next/image";
 
 import Welcome from "./components/Welcome";
+import { SERVER_DIRECTORY } from 'next/dist/shared/lib/constants';
 
 export default function Vote() {
     const [questionInfo, setQuestionInfo] = useState(null);
@@ -28,6 +29,7 @@ export default function Vote() {
                 });
                 const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
                 shuffleArray(selectedQuestion.choices)
+                console.log(selectedQuestion);
                 setQuestionInfo(selectedQuestion);
             } catch (e) {
                 console.log("Transaction failed: ", e);
@@ -61,30 +63,30 @@ export default function Vote() {
     const handleSelection = async (event) => {
         setSelectedAnswer(event.target.value);
 
-        try {
-            const res = await fetch('/api/vote', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    userId: String(user.uid),
-                    choiceId: Number(selectedAnswer),
-                    question: questionInfo,
-                }),
-            });
+        // try {
+        //     const res = await fetch('/api/vote', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify({
+        //             userId: String(user.uid),
+        //             choiceId: Number(selectedAnswer),
+        //             question: questionInfo,
+        //         }),
+        //     });
 
-            const data = await res.json();
+        //     const data = await res.json();
 
-            if (res.ok) {
-                setAnswered(true);
-            } else {
-                setAnswered(false);
-            }
-        } catch (err) {
-            setAnswered(false);
-            console.error('Error submitting the form:', err);
-        }
+        //     if (res.ok) {
+        //         setAnswered(true);
+        //     } else {
+        //         setAnswered(false);
+        //     }
+        // } catch (err) {
+        //     setAnswered(false);
+        //     console.error('Error submitting the form:', err);
+        // }
     };
 
     const handleExitWelcome = () => {
@@ -116,18 +118,18 @@ export default function Vote() {
 
 
                     {/* VOTED */}
-                    {(answered && !selectedAnswer) ?
+                    {/* {(answered && !selectedAnswer) ?
                         <div className='flex flex-col items-center mt-40'>
                             <Image src={'/check.png'} alt="check mark" width={250} height={250} />
                             <p
                                 className='text-2xl font-bold text-white text-center mt-10'
                             >You Have Already Voted</p>
                         </div>
-                        : null}
+                        : null} */}
 
 
                     {/* VOTING FORM */}
-                    {(!answered && !selectedAnswer) ?
+                    {(!selectedAnswer) ? //REPLACE w/ (!answered && !selectedAnswer)
                         <form className='my-8'>
                             <fieldset>
                                 <p className='text-white text-7xl font-bold'>Q.</p>
@@ -160,11 +162,22 @@ export default function Vote() {
 
                     {/* RESULT */}
                     {selectedAnswer ?
-                        <div className='flex flex-col items-center mt-40'>
-                            <Image src={'/thumbs_up.png'} alt="check mark" width={250} height={250} />
-                            <p
-                                className='text-2xl font-bold text-white text-center mt-10'
-                            >{questionInfo.choices[selectedAnswer].result}</p>
+                        <div className='mt-40'>
+                            {questionInfo.choices[selectedAnswer].score >= 0 ?
+                                <div className='flex flex-col items-center'>
+                                    <Image src={'/thumbs_up.png'} alt="check mark" width={250} height={250} />
+                                    <p className='text-2xl font-bold text-white text-center mt-10'>
+                                        Your answer enhance the ecosystem in Stratford!
+                                    </p>
+                                </div>
+                                :
+                                <div className='flex flex-col items-center'>
+                                    <Image src={'/thumbs_down.png'} alt="check mark" width={250} height={250} />
+                                    <p className='text-2xl font-bold text-white text-center mt-10'>
+                                        Your answer negatively influences the ecosystem in Stratford.
+                                    </p>
+                                </div>
+                            }
                         </div> : null}
                 </main>
             ) : null}
