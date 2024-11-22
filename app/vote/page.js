@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 import Image from "next/image";
 
 import Welcome from "./components/Welcome";
-import { SERVER_DIRECTORY } from 'next/dist/shared/lib/constants';
 
 export default function Vote() {
     const [questionInfo, setQuestionInfo] = useState(null);
@@ -27,7 +26,8 @@ export default function Vote() {
                 querySnapshot.forEach((doc) => {
                     questions.push(doc.data());
                 });
-                const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
+                // const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
+                const selectedQuestion = questions[0];
                 shuffleArray(selectedQuestion.choices)
                 console.log(selectedQuestion);
                 setQuestionInfo(selectedQuestion);
@@ -61,32 +61,33 @@ export default function Vote() {
     }, [user]);
 
     const handleSelection = async (event) => {
-        setSelectedAnswer(event.target.value);
+        const choice = questionInfo.choices[event.target.value];
+        setSelectedAnswer(questionInfo.choices[event.target.value].id);
 
-        // try {
-        //     const res = await fetch('/api/vote', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify({
-        //             userId: String(user.uid),
-        //             choiceId: Number(selectedAnswer),
-        //             question: questionInfo,
-        //         }),
-        //     });
+        try {
+            const res = await fetch('/api/vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: String(user.uid),
+                    choiceId: Number(choice.id),
+                    question: questionInfo,
+                }),
+            });
 
-        //     const data = await res.json();
+            const data = await res.json();
 
-        //     if (res.ok) {
-        //         setAnswered(true);
-        //     } else {
-        //         setAnswered(false);
-        //     }
-        // } catch (err) {
-        //     setAnswered(false);
-        //     console.error('Error submitting the form:', err);
-        // }
+            if (res.ok) {
+                setAnswered(true);
+            } else {
+                setAnswered(false);
+            }
+        } catch (err) {
+            setAnswered(false);
+            console.error('Error submitting the form:', err);
+        }
     };
 
     const handleExitWelcome = () => {

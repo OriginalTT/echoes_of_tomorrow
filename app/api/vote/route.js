@@ -8,14 +8,16 @@ export async function POST(req) {
 
         const data = await req.json();
         const { userId, choiceId } = data;
+        console.log(data);
+        console.log(data.question.choices[Number(choiceId)]);
 
         const addVote = await addDoc(collection(db, "votes"), {
             timestamp: serverTimestamp(),
             userId: String(userId),
             questionId: Number(data.question.id),
-            choiceId: Number(choiceId),
+            choiceId: Number(data.question.choices[Number(choiceId)].id),
             target: String(data.question.target),
-            score: Number(data.question.choices[choiceId].score),
+            score: Number(data.question.choices[Number(choiceId)].score),
         });
 
         return new NextResponse(JSON.stringify({ message: 'Your vote has been recorded successfully!' }), {

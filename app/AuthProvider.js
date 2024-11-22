@@ -23,7 +23,6 @@ export default function AuthProvider({ children }) {
         // Sign in anonymously
         signInAnonymously(auth)
             .then(() => {
-                console.log("Signed in anonymously");
                 console.log("User ID:", auth.currentUser.uid);
             })
             .catch((error) => {
@@ -48,10 +47,6 @@ export default function AuthProvider({ children }) {
         user,
         loading,
     };
-
-    useEffect(() => {
-        console.log(loading);
-    }, [loading]);
 
     return (
         <AuthContext.Provider value={value}>
