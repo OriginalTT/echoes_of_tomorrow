@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import P5Sketch from './P5Sketch'; // Adjust the import path as needed
+import dynamic from 'next/dynamic';
 import { db } from '../../lib/firebase';
 import { collection, query, orderBy, onSnapshot, limit } from 'firebase/firestore';
+
+const P5Sketch = dynamic(() => import('./P5Sketch'), { ssr: false });
 
 export default function HomeClient() {
     const [votes, setVotes] = useState([]);
