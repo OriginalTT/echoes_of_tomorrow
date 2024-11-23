@@ -26,10 +26,8 @@ export default function Vote() {
                 querySnapshot.forEach((doc) => {
                     questions.push(doc.data());
                 });
-                // const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
-                const selectedQuestion = questions[0];
+                const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
                 shuffleArray(selectedQuestion.choices)
-                console.log(selectedQuestion);
                 setQuestionInfo(selectedQuestion);
             } catch (e) {
                 console.log("Transaction failed: ", e);
