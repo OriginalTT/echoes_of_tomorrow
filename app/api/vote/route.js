@@ -7,18 +7,22 @@ export async function POST(req) {
         // Manually parse the JSON body
 
         const data = await req.json();
-        const { userId, choiceId } = data;
-        console.log(data);
-        console.log(data.question.choices[Number(choiceId)]);
+        const { userId, choiceId, question } = data;
 
-        const addVote = await addDoc(collection(db, "votes"), {
+        console.log(question);
+
+        const voteInfo = {
             timestamp: serverTimestamp(),
             userId: String(userId),
-            questionId: Number(data.question.id),
-            choiceId: Number(data.question.choices[Number(choiceId)].id),
-            target: String(data.question.target),
-            score: Number(data.question.choices[Number(choiceId)].score),
-        });
+            questionId: Number(question.id),
+            choiceId: Number(question.choices[Number(choiceId)].id),
+            target: String(question.target),
+            score: Number(question.choices[Number(choiceId)].score),
+        }
+
+        console.log(voteInfo);
+
+        const addVote = await addDoc(collection(db, "votes"), voteInfo);
 
         return new NextResponse(JSON.stringify({ message: 'Your vote has been recorded successfully!' }), {
             status: 200,

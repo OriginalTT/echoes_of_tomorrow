@@ -62,7 +62,7 @@ export default function Vote() {
 
     const handleSelection = async (event) => {
         const choice = questionInfo.choices[event.target.value];
-        setSelectedAnswer(questionInfo.choices[event.target.value].id);
+        setSelectedAnswer(Number(event.target.value));
 
         try {
             const res = await fetch('/api/vote', {
@@ -72,7 +72,7 @@ export default function Vote() {
                 },
                 body: JSON.stringify({
                     userId: String(user.uid),
-                    choiceId: Number(choice.id),
+                    choiceId: Number(event.target.value),
                     question: questionInfo,
                 }),
             });
@@ -130,7 +130,7 @@ export default function Vote() {
 
 
                     {/* VOTING FORM */}
-                    {(!selectedAnswer) ? //REPLACE w/ (!answered && !selectedAnswer)
+                    {(selectedAnswer === null) ? //REPLACE w/ (!answered && !selectedAnswer)
                         <form className='my-8'>
                             <fieldset>
                                 <p className='text-white text-7xl font-bold'>Q.</p>
@@ -162,7 +162,7 @@ export default function Vote() {
 
 
                     {/* RESULT */}
-                    {selectedAnswer ?
+                    {selectedAnswer !== null ?
                         <div className='mt-40'>
                             {questionInfo.choices[selectedAnswer].score >= 0 ?
                                 <div className='flex flex-col items-center'>
