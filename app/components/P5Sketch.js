@@ -32,10 +32,18 @@ export default function P5Sketch({ votes }) {
 
             const changes = [];
             const exclamationLocation = {
-                'bike_lane': [1920 / 2, 1080 / 2],
-                'parking_lot': [838 / 2.13, 673 / 2.13],
-                'public_transit': [2155 / 2.13, 916 / 2.13],
-                'residence': [3113 / 2.13, 29 / 2.13],
+                'bike_lane': [700, 550],
+                'parking_lot': [340, 800],
+                'public_transit': [1010, 430],
+                'residence': [1500, 700],
+                'business': [1600, 200],
+                'eco_friendly': [500, 150],
+                'local_businesses': [550, 300],
+                'manufacturing': [200, 150],
+                'eco_tourism': [750, 450],
+                'festival': [1000, 200],
+                'luxury': [1500, 400],
+                'year_round_tourism': [1300, 850]
             }
 
             // Images
@@ -111,7 +119,7 @@ export default function P5Sketch({ votes }) {
                 festival1 = p.loadImage('/p5/q3/festival_1.png');
                 festival2 = p.loadImage('/p5/q3/festival_2.png');
                 festival3 = p.loadImage('/p5/q3/festival_3.png');
-                festival = [festival1, festival2];
+                festival = [festival1, festival2, festival3];
 
                 luxury1 = p.loadImage('/p5/q3/luxury_1.png');
                 luxury2 = p.loadImage('/p5/q3/luxury_2.png');
@@ -148,9 +156,11 @@ export default function P5Sketch({ votes }) {
                 p.image(yearRoundTourism[imgIndex(2, 'year_round_tourism', state)], 0, 0, 1920, 1080);
 
                 // Exclamation
-                // for (let i = 0; i < changes.length; i++) {
-                //     p.image(exclamation, exclamationLocation[changes[i]][0], exclamationLocation[changes[i]][1], 86, 281);
-                // }
+                for (let i = 0; i < changes.length; i++) {
+                    p.text(changes[i], 100, 500 + i * 50);
+                    p.image(exclamation, exclamationLocation[changes[i]][0], exclamationLocation[changes[i]][1], 29, 93);
+                }
+
                 // Vote UI
                 const rectWidth = 64;
                 const rectHeight = 32;
@@ -193,10 +203,8 @@ export default function P5Sketch({ votes }) {
                     }
                 }
 
-                console.log(state);
-
                 if (localVotes.length > 0) {
-                    changes.push(localVotes[localVotes.length - 1].target);
+                    changes.push(localVotes[0].target);
                     setTimeout(() => changes.shift(), 10000);
                 }
             };
