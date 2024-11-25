@@ -34,11 +34,11 @@ export default function P5Sketch({ votes }) {
             const exclamationLocation = {
                 'bike_lane': [700, 550],
                 'parking_lot': [340, 800],
-                'public_transit': [1010, 430],
-                'residence': [1500, 700],
+                'public_transit': [1050, 450],
+                'residence': [1600, 600],
                 'business': [1600, 200],
                 'eco_friendly': [500, 150],
-                'local_businesses': [550, 300],
+                'local_businesses': [500, 300],
                 'manufacturing': [200, 150],
                 'eco_tourism': [750, 450],
                 'festival': [1000, 200],
@@ -157,7 +157,6 @@ export default function P5Sketch({ votes }) {
 
                 // Exclamation
                 for (let i = 0; i < changes.length; i++) {
-                    p.text(changes[i], 100, 500 + i * 50);
                     p.image(exclamation, exclamationLocation[changes[i]][0], exclamationLocation[changes[i]][1], 29, 93);
                 }
 
@@ -205,7 +204,7 @@ export default function P5Sketch({ votes }) {
 
                 if (localVotes.length > 0) {
                     changes.push(localVotes[0].target);
-                    setTimeout(() => changes.shift(), 10000);
+                    setTimeout(() => changes.shift(), 5000);
                 }
             };
         };

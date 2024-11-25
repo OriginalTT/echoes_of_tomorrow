@@ -7,7 +7,10 @@ import { useAuth } from "../AuthProvider";
 import { useState, useEffect } from 'react';
 import Image from "next/image";
 
+import { motion, AnimatePresence } from 'framer-motion';
+
 import Welcome from "./components/Welcome";
+import Choice from './components/Choice';
 
 export default function Vote() {
     const [questionInfo, setQuestionInfo] = useState(null);
@@ -126,58 +129,57 @@ export default function Vote() {
                         </div>
                         : null} */}
 
-
-                    {/* VOTING FORM */}
-                    {(selectedAnswer === null) ? //REPLACE w/ (!answered && !selectedAnswer)
-                        <form className='my-8'>
-                            <fieldset>
-                                <p className='text-white text-7xl font-bold'>Q.</p>
-                                <p className='text-white text-lg font-bold'>{questionInfo && questionInfo.question}</p>
-                                <div className='w-full mx-auto h-[2px] bg-white mt-5 mb-8' />
-                                <div className='flex flex-col items-center gap-5'>
-                                    {questionInfo && questionInfo.choices.map((option, index) => (
-                                        <div key={index}
-                                            className="bg-[#FBFFEE] px-10 rounded-2xl w-full h-32 flex items-center  cursor-pointer"
-                                        >
-                                            <input
-                                                type="radio"
-                                                id={"option_" + index}
-                                                name="selected_option"
-                                                value={index}
-                                                onChange={handleSelection}
-                                                disabled={selectedAnswer !== null}
-                                                className='appearance-none 
-                                                disabled:opacity-50 
-                                                enabled:hover:bg-[#54522A] enabled:hover:text-white' />
-                                            <label htmlFor={"option_" + index}>
-                                                <p className='text-[#5C5A32] font-semibold font-ce'>{option.label}</p>
-                                            </label>
-                                        </div>
-                                    ))}
-                                </div>
-                            </fieldset>
-                        </form> : null}
+                    <AnimatePresence>
+                        {/* VOTING FORM */}
+                        {(selectedAnswer === null) ? //REPLACE w/ (!answered && !selectedAnswer)
+                            <motion.form className='my-8'
+                                key="form"
+                                exit={{ opacity: 0, scale: 1.1 }}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}>
+                                <fieldset>
+                                    <p className='text-white text-7xl font-bold'>Q.</p>
+                                    <p className='text-white text-lg font-bold'>{questionInfo && questionInfo.question}</p>
+                                    <div className='w-full mx-auto h-[2px] bg-white mt-5 mb-8' />
+                                    <div className='flex flex-col items-center gap-5'>
+                                        {questionInfo?.choices.map((option, index) => (
+                                            <Choice
+                                                key={index}
+                                                option={option}
+                                                index={index}
+                                                handleSelection={handleSelection}
+                                                selectedAnswer={selectedAnswer}
+                                            />
+                                        ))}
+                                    </div>
+                                </fieldset>
+                            </motion.form> : null}
 
 
-                    {/* RESULT */}
-                    {selectedAnswer !== null ?
-                        <div className='mt-40'>
-                            {questionInfo.choices[selectedAnswer].score >= 0 ?
-                                <div className='flex flex-col items-center'>
-                                    <Image src={'/thumbs_up.png'} alt="check mark" width={250} height={250} />
-                                    <p className='text-2xl font-bold text-white text-center mt-10'>
-                                        Your answer enhance the ecosystem in Stratford!
-                                    </p>
-                                </div>
-                                :
-                                <div className='flex flex-col items-center'>
-                                    <Image src={'/thumbs_down.png'} alt="check mark" width={250} height={250} />
-                                    <p className='text-2xl font-bold text-white text-center mt-10'>
-                                        Your answer negatively influences the ecosystem in Stratford.
-                                    </p>
-                                </div>
-                            }
-                        </div> : null}
+                        {/* RESULT */}
+                        {selectedAnswer !== null ?
+                            <motion.div className='mt-40'
+                                key="result"
+                                exit={{ opacity: 0, scale: 1.1 }}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}>
+                                {questionInfo.choices[selectedAnswer].score >= 0 ?
+                                    <div className='flex flex-col items-center'>
+                                        <Image src={'/thumbs_up.png'} alt="check mark" width={250} height={250} />
+                                        <p className='text-2xl font-bold text-white text-center mt-10'>
+                                            Your answer enhance the ecosystem in Stratford!
+                                        </p>
+                                    </div>
+                                    :
+                                    <div className='flex flex-col items-center'>
+                                        <Image src={'/thumbs_down.png'} alt="check mark" width={250} height={250} />
+                                        <p className='text-2xl font-bold text-white text-center mt-10'>
+                                            Your answer negatively influences the ecosystem in Stratford.
+                                        </p>
+                                    </div>
+                                }
+                            </motion.div> : null}
+                    </AnimatePresence>
                 </main>
             ) : null}
         </>
