@@ -137,7 +137,7 @@ export default function Welcome({ exitWelcome }) {
                                         }
                                     }}>
                                     <Image src={images[imageIndex]} alt="Onboarding" width={150} height={150} />
-                                    <p className="text-white text-center text-lg font-bold">{descriptions[imageIndex]}</p>
+                                    <p className="text-white text-center text-lg font-bold h-[100px]">{descriptions[imageIndex]}</p>
                                 </motion.div>
                             </AnimatePresence>
                             <div className="flex gap-6 items-center justify-center">
@@ -154,7 +154,7 @@ export default function Welcome({ exitWelcome }) {
                                 <motion.button
                                     className="bg-white text-[#69860C] 
                                     font-bold text-[20px] 
-                                    px-28 py-3 mb-20
+                                    px-28 py-3 mb-32
                                     rounded-full
                                     hover:bg-slate-50 z-10"
                                     whileTap={{ scale: 0.95 }}
@@ -166,7 +166,7 @@ export default function Welcome({ exitWelcome }) {
                                     Continue
                                 </motion.button>
                             </div>
-                        ) : <div className="h-[134px]"/>}
+                        ) : <div className="h-[182px]" />}
                     </motion.div>
                     : null}
             </AnimatePresence>

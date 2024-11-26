@@ -57,11 +57,17 @@ export default function AuthProvider({ children }) {
                         className="w-screen h-screen object-cover fixed top-0 left-0 z-[-1]" />
                     <div className='bg-gradient-to-b from-[#69860C] to-[#b5cc6b] 
             w-screen h-screen fixed top-0 left-0 z-[-2]'></div>
-                    <div className='flex flex-col items-center mt-48'>
-                        <Image src={'/loader.png'} alt="check mark" width={250} height={250} />
+                    <div className='flex flex-col items-center mt-60'>
+                        {/* <Image src={'/loader.png'} alt="check mark" width={250} height={250} />
                         <p
                             className='text-2xl font-bold text-white text-center mt-10'
-                        >Authenticating...</p>
+                        >Authenticating...</p> */}
+                        <div className='flex flex-col items-center'>
+                            <Image src={'/loader.png'} alt="authenticating" width={250} height={250} />
+                            <p className='text-2xl font-bold text-white text-center mt-10'>
+                                Authenticating...
+                            </p>
+                        </div>
                     </div>
                 </main>) : null}
         </AuthContext.Provider>

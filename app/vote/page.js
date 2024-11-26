@@ -17,6 +17,7 @@ export default function Vote() {
     const [welcome, setWelcome] = useState(true);
     const [answered, setAnswered] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [lookUp, setLookUp] = useState(false);
 
     const { user } = useAuth();
 
@@ -64,6 +65,9 @@ export default function Vote() {
     const handleSelection = async (event) => {
         const choice = questionInfo.choices[event.target.value];
         setSelectedAnswer(Number(event.target.value));
+        setTimeout(() => {
+            setLookUp(true);
+        }, 5000);
 
         try {
             const res = await fetch('/api/vote', {
@@ -129,7 +133,7 @@ export default function Vote() {
                         </div>
                         : null} */}
 
-                    <AnimatePresence>
+                    <AnimatePresence mode="wait">
                         {/* VOTING FORM */}
                         {(selectedAnswer === null) ? //REPLACE w/ (!answered && !selectedAnswer)
                             <motion.form className='my-8'
@@ -157,7 +161,7 @@ export default function Vote() {
 
 
                         {/* RESULT */}
-                        {selectedAnswer !== null ?
+                        {selectedAnswer !== null && !lookUp ?
                             <motion.div className='mt-40'
                                 key="result"
                                 exit={{ opacity: 0, scale: 1.1 }}
@@ -165,19 +169,33 @@ export default function Vote() {
                                 animate={{ opacity: 1, scale: 1 }}>
                                 {questionInfo.choices[selectedAnswer].score >= 0 ?
                                     <div className='flex flex-col items-center'>
-                                        <Image src={'/thumbs_up.png'} alt="check mark" width={250} height={250} />
+                                        <Image src={'/thumbs_up.png'} alt="Thumbs up" width={250} height={250} />
                                         <p className='text-2xl font-bold text-white text-center mt-10'>
                                             Your answer enhance the ecosystem in Stratford!
                                         </p>
                                     </div>
                                     :
                                     <div className='flex flex-col items-center'>
-                                        <Image src={'/thumbs_down.png'} alt="check mark" width={250} height={250} />
+                                        <Image src={'/thumbs_down.png'} alt="Thumbs down" width={250} height={250} />
                                         <p className='text-2xl font-bold text-white text-center mt-10'>
                                             Your answer negatively influences the ecosystem in Stratford.
                                         </p>
                                     </div>
                                 }
+                            </motion.div> : null}
+
+                        {selectedAnswer !== null && lookUp ?
+                            <motion.div className='mt-40'
+                                key="lookUp"
+                                exit={{ opacity: 0, scale: 1.1 }}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}>
+                                <div className='flex flex-col items-center'>
+                                    <Image src={'/up.png'} alt="Arrow pointing upward" width={250} height={250} />
+                                    <p className='text-2xl font-bold text-white text-center mt-10'>
+                                        Look up at the screen. See how your choice effects the world.
+                                    </p>
+                                </div>
                             </motion.div> : null}
                     </AnimatePresence>
                 </main>
