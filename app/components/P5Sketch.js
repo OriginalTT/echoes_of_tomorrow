@@ -204,7 +204,7 @@ export default function P5Sketch({ votes }) {
 
                 if (localVotes.length > 0) {
                     changes.push(localVotes[0].target);
-                    setTimeout(() => changes.shift(), 5000);
+                    setTimeout(() => changes.shift(), 10000);
                 }
             };
         };
