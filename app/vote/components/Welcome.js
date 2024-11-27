@@ -87,7 +87,7 @@ export default function Welcome({ exitWelcome }) {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="w-screen h-screen flex flex-col items-center justify-center gap-12">
-                        <Image src={'/logo_vertical.png'} alt="Logo" width={200} height={266} />
+                        <Image src={'/logo_vertical.png'} alt="Logo" width={200} height={266} priority={true} loading='eager' />
                         <motion.button
                             className="bg-white text-[#69860C] 
                                     font-bold text-[20px] 
@@ -136,7 +136,7 @@ export default function Welcome({ exitWelcome }) {
                                             paginate(-1);
                                         }
                                     }}>
-                                    <Image src={images[imageIndex]} alt="Onboarding" width={150} height={150} />
+                                    <Image src={images[imageIndex]} alt="Onboarding" width={150} height={150} priority={true} loading='eager' />
                                     <p className="text-white text-center text-lg font-bold h-[100px]">{descriptions[imageIndex]}</p>
                                 </motion.div>
                             </AnimatePresence>

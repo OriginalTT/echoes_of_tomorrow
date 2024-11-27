@@ -169,14 +169,14 @@ export default function Vote() {
                                 animate={{ opacity: 1, scale: 1 }}>
                                 {questionInfo.choices[selectedAnswer].score >= 0 ?
                                     <div className='flex flex-col items-center'>
-                                        <Image src={'/thumbs_up.png'} alt="Thumbs up" width={250} height={250} />
+                                        <Image src={'/thumbs_up.png'} alt="Thumbs up" width={250} height={250} priority={true} loading='eager' />
                                         <p className='text-2xl font-bold text-white text-center mt-10'>
                                             Your answer enhance the ecosystem in Stratford!
                                         </p>
                                     </div>
                                     :
                                     <div className='flex flex-col items-center'>
-                                        <Image src={'/thumbs_down.png'} alt="Thumbs down" width={250} height={250} />
+                                        <Image src={'/thumbs_down.png'} alt="Thumbs down" width={250} height={250} priority={true} loading='eager'/>
                                         <p className='text-2xl font-bold text-white text-center mt-10'>
                                             Your answer negatively influences the ecosystem in Stratford.
                                         </p>
@@ -191,7 +191,7 @@ export default function Vote() {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}>
                                 <div className='flex flex-col items-center'>
-                                    <Image src={'/up.png'} alt="Arrow pointing upward" width={250} height={250} />
+                                    <Image src={'/up.png'} alt="Arrow pointing upward" width={250} height={250} priority={true} loading='eager' />
                                     <p className='text-2xl font-bold text-white text-center mt-10'>
                                         Look up at the screen. See how your choice effects the world.
                                     </p>
